@@ -1,122 +1,444 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
+
+const API_URL = "http://localhost:5000";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  const [activePage, setActivePage] = useState("dashboard");
+  const [customers, setCustomers] = useState([]);
+  const [customerSearch, setCustomerSearch] = useState("");
+  const [loadingCustomers, setLoadingCustomers] = useState(false);
+
+  const [showAddForm, setShowAddForm] = useState(false);
+
+  const [newCustomer, setNewCustomer] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+    notes: "",
+  });
+
+  async function loadCustomers(search = "") {
+    const token = localStorage.getItem("token");
+
+    if (!token) return;
+
+    setLoadingCustomers(true);
+
+    try {
+      const response = await fetch(
+        `${API_URL}/api/customers?search=${encodeURIComponent(search)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error(data.message);
+        return;
+      }
+
+      setCustomers(data.customers);
+    } catch (error) {
+      console.error("Customer loading error:", error);
+    } finally {
+      setLoadingCustomers(false);
+    }
+  }
+
+  async function handleLogin(event) {
+    event.preventDefault();
+    setMessage("Logging in...");
+
+    try {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(data.message || "Login failed.");
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      setUser(data.user);
+      setMessage("");
+    } catch (error) {
+      console.error(error);
+      setMessage("Unable to connect to the ServiTrack server.");
+    }
+  }
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    setUser(null);
+    setCustomers([]);
+    setEmail("");
+    setPassword("");
+    setActivePage("dashboard");
+  }
+
+  async function handleAddCustomer(event) {
+    event.preventDefault();
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(`${API_URL}/api/customers`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newCustomer),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Unable to add customer.");
+        return;
+      }
+
+      setNewCustomer({
+        name: "",
+        phone: "",
+        email: "",
+        address: "",
+        notes: "",
+      });
+
+      setShowAddForm(false);
+
+      await loadCustomers(customerSearch);
+
+      alert("Customer added successfully.");
+    } catch (error) {
+      console.error("Add customer error:", error);
+      alert("Unable to connect to the ServiTrack server.");
+    }
+  }
+
+  useEffect(() => {
+    if (user) {
+      loadCustomers();
+    }
+  }, [user]);
+
+  if (!user) {
+    return (
+      <div className="app">
+        <header className="navbar">
+          <div className="logo">ServiTrack</div>
+        </header>
+
+        <main className="hero">
+          <div className="hero-content">
+            <h1>Service Business Management Made Simple</h1>
+
+            <p>
+              Manage customers, service requests, jobs, technicians, and
+              schedules in one place.
+            </p>
+          </div>
+
+          <div className="login-card">
+            <h2>Login</h2>
+
+            <form onSubmit={handleLogin}>
+              <label>Email</label>
+
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="Enter your email"
+                required
+              />
+
+              <label>Password</label>
+
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Enter your password"
+                required
+              />
+
+              <button type="submit" className="primary-button">
+                Login
+              </button>
+            </form>
+
+            {message && <p className="message">{message}</p>}
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="dashboard">
+      <header className="dashboard-header">
+        <div className="logo">ServiTrack</div>
 
-      <div className="ticks"></div>
+        <div className="user-area">
+          <span>
+            {user.full_name} ({user.role})
+          </span>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+          <button onClick={handleLogout} className="logout-button">
+            Logout
+          </button>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <div className="dashboard-layout">
+        <aside className="sidebar">
+          <h3>Menu</h3>
+
+          <button
+            className={activePage === "dashboard" ? "active-menu" : ""}
+            onClick={() => setActivePage("dashboard")}
+          >
+            Dashboard
+          </button>
+
+          <button
+            className={activePage === "customers" ? "active-menu" : ""}
+            onClick={() => {
+              setActivePage("customers");
+              loadCustomers();
+            }}
+          >
+            Customers
+          </button>
+
+          <button>Service Requests</button>
+          <button>Jobs</button>
+          <button>Technicians</button>
+        </aside>
+
+        <main className="dashboard-content">
+          {activePage === "dashboard" && (
+            <>
+              <h1>Dashboard</h1>
+
+              <p className="welcome">
+                Welcome back, {user.full_name}!
+              </p>
+
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <h3>Total Customers</h3>
+                  <strong>{customers.length}</strong>
+                </div>
+
+                <div className="stat-card">
+                  <h3>New Requests</h3>
+                  <strong>0</strong>
+                </div>
+
+                <div className="stat-card">
+                  <h3>Scheduled Jobs</h3>
+                  <strong>0</strong>
+                </div>
+
+                <div className="stat-card">
+                  <h3>Completed Jobs</h3>
+                  <strong>0</strong>
+                </div>
+              </div>
+
+              <div className="dashboard-section">
+                <h2>Upcoming Appointments</h2>
+
+                <p>No upcoming appointments.</p>
+              </div>
+            </>
+          )}
+
+          {activePage === "customers" && (
+            <>
+              <div className="page-heading">
+                <div>
+                  <h1>Customers</h1>
+                  <p className="welcome">
+                    Manage your service business customers.
+                  </p>
+                </div>
+
+                <button
+                  className="primary-button"
+                  onClick={() => setShowAddForm(!showAddForm)}
+                >
+                  {showAddForm ? "Cancel" : "+ Add Customer"}
+                </button>
+              </div>
+
+              {showAddForm && (
+                <div className="customer-form-card">
+                  <h2>Add New Customer</h2>
+
+                  <form onSubmit={handleAddCustomer}>
+                    <label>Customer Name *</label>
+
+                    <input
+                      type="text"
+                      value={newCustomer.name}
+                      onChange={(event) =>
+                        setNewCustomer({
+                          ...newCustomer,
+                          name: event.target.value,
+                        })
+                      }
+                      placeholder="Enter customer name"
+                      required
+                    />
+
+                    <label>Phone</label>
+
+                    <input
+                      type="text"
+                      value={newCustomer.phone}
+                      onChange={(event) =>
+                        setNewCustomer({
+                          ...newCustomer,
+                          phone: event.target.value,
+                        })
+                      }
+                      placeholder="Enter phone number"
+                    />
+
+                    <label>Email</label>
+
+                    <input
+                      type="email"
+                      value={newCustomer.email}
+                      onChange={(event) =>
+                        setNewCustomer({
+                          ...newCustomer,
+                          email: event.target.value,
+                        })
+                      }
+                      placeholder="Enter email address"
+                    />
+
+                    <label>Address</label>
+
+                    <input
+                      type="text"
+                      value={newCustomer.address}
+                      onChange={(event) =>
+                        setNewCustomer({
+                          ...newCustomer,
+                          address: event.target.value,
+                        })
+                      }
+                      placeholder="Enter address"
+                    />
+
+                    <label>Notes</label>
+
+                    <textarea
+                      value={newCustomer.notes}
+                      onChange={(event) =>
+                        setNewCustomer({
+                          ...newCustomer,
+                          notes: event.target.value,
+                        })
+                      }
+                      placeholder="Additional notes"
+                      rows="4"
+                    />
+
+                    <button type="submit" className="primary-button">
+                      Save Customer
+                    </button>
+                  </form>
+                </div>
+              )}
+
+              <div className="customer-list-card">
+                <div className="customer-list-header">
+                  <h2>Customer List</h2>
+
+                  <input
+                    type="text"
+                    value={customerSearch}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      setCustomerSearch(value);
+                      loadCustomers(value);
+                    }}
+                    placeholder="Search customers..."
+                  />
+                </div>
+
+                {loadingCustomers ? (
+                  <p>Loading customers...</p>
+                ) : customers.length === 0 ? (
+                  <p>No customers found.</p>
+                ) : (
+                  <div className="customer-table-wrapper">
+                    <table className="customer-table">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Phone</th>
+                          <th>Email</th>
+                          <th>Address</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {customers.map((customer) => (
+                          <tr key={customer.customer_id}>
+                            <td>{customer.name}</td>
+                            <td>{customer.phone || "-"}</td>
+                            <td>{customer.email || "-"}</td>
+                            <td>{customer.address || "-"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </main>
+      </div>
+    </div>
+  );
 }
 
-export default App
+export default App;
