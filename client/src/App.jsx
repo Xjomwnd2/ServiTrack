@@ -28,6 +28,8 @@ function App() {
     notes: "",
   });
 
+  const [editingCustomer, setEditingCustomer] = useState(null);
+
   async function loadCustomers(search = "") {
     const token = localStorage.getItem("token");
 
@@ -142,6 +144,101 @@ function App() {
       alert("Customer added successfully.");
     } catch (error) {
       console.error("Add customer error:", error);
+      alert("Unable to connect to the ServiTrack server.");
+    }
+  }
+
+  function startEditing(customer) {
+    setEditingCustomer({
+      customer_id: customer.customer_id,
+      name: customer.name || "",
+      phone: customer.phone || "",
+      email: customer.email || "",
+      address: customer.address || "",
+      notes: customer.notes || "",
+    });
+
+    setShowAddForm(false);
+  }
+
+  function cancelEditing() {
+    setEditingCustomer(null);
+  }
+
+  async function handleEditCustomer(event) {
+    event.preventDefault();
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(
+        `${API_URL}/api/customers/${editingCustomer.customer_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: editingCustomer.name,
+            phone: editingCustomer.phone,
+            email: editingCustomer.email,
+            address: editingCustomer.address,
+            notes: editingCustomer.notes,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Unable to update customer.");
+        return;
+      }
+
+      setEditingCustomer(null);
+
+      await loadCustomers(customerSearch);
+
+      alert("Customer updated successfully.");
+    } catch (error) {
+      console.error("Update customer error:", error);
+      alert("Unable to connect to the ServiTrack server.");
+    }
+  }
+
+  async function handleDeleteCustomer(customerId, customerName) {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${customerName}?`
+    );
+
+    if (!confirmed) return;
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(
+        `${API_URL}/api/customers/${customerId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Unable to delete customer.");
+        return;
+      }
+
+      await loadCustomers(customerSearch);
+
+      alert("Customer deleted successfully.");
+    } catch (error) {
+      console.error("Delete customer error:", error);
       alert("Unable to connect to the ServiTrack server.");
     }
   }
@@ -280,7 +377,6 @@ function App() {
 
               <div className="dashboard-section">
                 <h2>Upcoming Appointments</h2>
-
                 <p>No upcoming appointments.</p>
               </div>
             </>
@@ -298,7 +394,10 @@ function App() {
 
                 <button
                   className="primary-button"
-                  onClick={() => setShowAddForm(!showAddForm)}
+                  onClick={() => {
+                    setShowAddForm(!showAddForm);
+                    setEditingCustomer(null);
+                  }}
                 >
                   {showAddForm ? "Cancel" : "+ Add Customer"}
                 </button>
@@ -387,6 +486,94 @@ function App() {
                 </div>
               )}
 
+              {editingCustomer && (
+                <div className="customer-form-card">
+                  <h2>Edit Customer</h2>
+
+                  <form onSubmit={handleEditCustomer}>
+                    <label>Customer Name *</label>
+
+                    <input
+                      type="text"
+                      value={editingCustomer.name}
+                      onChange={(event) =>
+                        setEditingCustomer({
+                          ...editingCustomer,
+                          name: event.target.value,
+                        })
+                      }
+                      required
+                    />
+
+                    <label>Phone</label>
+
+                    <input
+                      type="text"
+                      value={editingCustomer.phone}
+                      onChange={(event) =>
+                        setEditingCustomer({
+                          ...editingCustomer,
+                          phone: event.target.value,
+                        })
+                      }
+                    />
+
+                    <label>Email</label>
+
+                    <input
+                      type="email"
+                      value={editingCustomer.email}
+                      onChange={(event) =>
+                        setEditingCustomer({
+                          ...editingCustomer,
+                          email: event.target.value,
+                        })
+                      }
+                    />
+
+                    <label>Address</label>
+
+                    <input
+                      type="text"
+                      value={editingCustomer.address}
+                      onChange={(event) =>
+                        setEditingCustomer({
+                          ...editingCustomer,
+                          address: event.target.value,
+                        })
+                      }
+                    />
+
+                    <label>Notes</label>
+
+                    <textarea
+                      value={editingCustomer.notes}
+                      onChange={(event) =>
+                        setEditingCustomer({
+                          ...editingCustomer,
+                          notes: event.target.value,
+                        })
+                      }
+                      rows="4"
+                    />
+
+                    <div className="form-actions">
+                      <button type="submit" className="primary-button">
+                        Save Changes
+                      </button>
+
+                      <button
+                        type="button"
+                        className="cancel-button"
+                        onClick={cancelEditing}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
               <div className="customer-list-card">
                 <div className="customer-list-header">
                   <h2>Customer List</h2>
@@ -416,6 +603,7 @@ function App() {
                           <th>Phone</th>
                           <th>Email</th>
                           <th>Address</th>
+                          <th>Actions</th>
                         </tr>
                       </thead>
 
@@ -426,6 +614,29 @@ function App() {
                             <td>{customer.phone || "-"}</td>
                             <td>{customer.email || "-"}</td>
                             <td>{customer.address || "-"}</td>
+
+                            <td>
+                              <div className="action-buttons">
+                                <button
+                                  className="edit-button"
+                                  onClick={() => startEditing(customer)}
+                                >
+                                  Edit
+                                </button>
+
+                                <button
+                                  className="delete-button"
+                                  onClick={() =>
+                                    handleDeleteCustomer(
+                                      customer.customer_id,
+                                      customer.name
+                                    )
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
