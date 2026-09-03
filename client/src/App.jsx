@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import ServiceRequests from "./ServiceRequests";
-import ServiceRequests from "./ServiceRequests";
 import "./App.css";
 
 const API_URL = "http://localhost:5000";
