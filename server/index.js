@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+const authRoutes = require("./routes/authRoutes");
+
 const app = express();
 
 const PORT = process.env.PORT || 5000;
@@ -16,6 +18,9 @@ app.get("/", (req, res) => {
     message: "ServiTrack API is running!"
   });
 });
+
+// Authentication routes
+app.use("/api/auth", authRoutes);
 
 // Start server
 app.listen(PORT, () => {
