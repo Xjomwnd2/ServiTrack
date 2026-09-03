@@ -346,6 +346,7 @@ function App() {
         </aside>
 
         <main className="dashboard-content">
+          {activePage === "serviceRequests" && <ServiceRequests />}
           {activePage === "dashboard" && (
             <>
               <h1>Dashboard</h1>
