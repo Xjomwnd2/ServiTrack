@@ -1,6 +1,6 @@
 const fs = require("fs");
 const { Client } = require("pg");
-require("dotenv").config({ path: "./server/.env" });
+require("dotenv").config();
 
 const client = new Client({
   host: process.env.DB_HOST,
@@ -10,7 +10,7 @@ const client = new Client({
   password: process.env.DB_PASSWORD,
 });
 
-const schema = fs.readFileSync("./database/schema.sql", "utf8");
+const schema = fs.readFileSync("../database/schema.sql", "utf8");
 
 async function loadSchema() {
   try {
