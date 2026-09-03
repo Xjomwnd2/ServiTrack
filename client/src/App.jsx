@@ -340,7 +340,7 @@ function App() {
             Customers
           </button>
 
-          <button>Service Requests</button>
+          <button className={activePage === "serviceRequests" ? "active-menu" : ""} onClick={() => setActivePage("serviceRequests")}>Service Requests</button>
           <button>Jobs</button>
           <button>Technicians</button>
         </aside>
