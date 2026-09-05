@@ -415,7 +415,7 @@ useEffect(() => {
 
                 <div className="stat-card">
                   <h3>Scheduled Jobs</h3>
-                  <strong>0</strong>
+                  <strong>{dashboardData.stats.scheduled_jobs}</strong>
                 </div>
 
                 <div className="stat-card">
