@@ -410,7 +410,7 @@ useEffect(() => {
 
                 <div className="stat-card">
                   <h3>New Requests</h3>
-                  <strong>0</strong>
+                  <strong>{dashboardData.stats.new_requests}</strong>
                 </div>
 
                 <div className="stat-card">
