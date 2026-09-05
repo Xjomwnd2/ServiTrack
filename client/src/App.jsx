@@ -405,7 +405,7 @@ useEffect(() => {
               <div className="stats-grid">
                 <div className="stat-card">
                   <h3>Total Customers</h3>
-                  <strong>{customers.length}</strong>
+                  <strong>{dashboardData.stats.total_customers}</strong>
                 </div>
 
                 <div className="stat-card">
