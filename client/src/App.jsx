@@ -420,7 +420,7 @@ useEffect(() => {
 
                 <div className="stat-card">
                   <h3>Completed Jobs</h3>
-                  <strong>0</strong>
+                  <strong>{dashboardData.stats.completed_jobs}</strong>
                 </div>
               </div>
 
