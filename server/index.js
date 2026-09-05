@@ -27,6 +27,7 @@ app.use("/api/auth", authRoutes);
 // Customer routes
 app.use("/api/customers", customerRoutes);
 app.use("/api/service-requests", serviceRequestRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // Start server
 app.listen(PORT, () => {
