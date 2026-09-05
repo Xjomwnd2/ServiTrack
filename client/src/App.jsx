@@ -425,9 +425,44 @@ useEffect(() => {
               </div>
 
               <div className="dashboard-section">
-                <h2>Upcoming Appointments</h2>
-                <p>No upcoming appointments.</p>
-              </div>
+  <h2>Upcoming Appointments</h2>
+
+  {loadingDashboard ? (
+    <p>Loading appointments...</p>
+  ) : dashboardData.appointments.length === 0 ? (
+    <p>No upcoming appointments.</p>
+  ) : (
+    <div className="customer-table-wrapper">
+      <table className="customer-table">
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Service</th>
+            <th>Date</th>
+            <th>Priority</th>
+            <th>Technician</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {dashboardData.appointments.map((appointment) => (
+            <tr key={appointment.request_id}>
+              <td>{appointment.customer_name}</td>
+              <td>{appointment.description}</td>
+              <td>
+                {new Date(
+                  appointment.date_requested
+                ).toLocaleDateString()}
+              </td>
+              <td>{appointment.priority}</td>
+              <td>{appointment.assigned_technician || "-"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</div>
             </>
           )}
 
