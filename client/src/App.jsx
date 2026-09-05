@@ -291,6 +291,12 @@ async function loadDashboard() {
   }
 }, [user]);
 
+useEffect(() => {
+  if (user && activePage === "dashboard") {
+    loadDashboard();
+  }
+}, [user, activePage]);
+
   if (!user) {
     return (
       <div className="app">
