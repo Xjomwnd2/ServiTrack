@@ -285,10 +285,11 @@ async function loadDashboard() {
   }
 
   useEffect(() => {
-    if (user) {
-      loadCustomers();
-    }
-  }, [user]);
+  if (user) {
+    loadCustomers();
+    loadDashboard();
+  }
+}, [user]);
 
   if (!user) {
     return (
