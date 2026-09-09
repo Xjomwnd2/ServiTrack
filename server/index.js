@@ -10,8 +10,11 @@ const app = express();
 const jobRoutes = require("./routes/jobRoutes");
 const technicianRoutes = require("./routes/technicianRoutes");
 
-
 const PORT = process.env.PORT || 5000;
+
+// ...
+app.use("/api/jobs", jobRoutes);
+app.use("/api/technicians", technicianRoutes);
 
 // Middleware
 app.use(cors());
