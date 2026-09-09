@@ -7,6 +7,9 @@ const customerRoutes = require("./routes/customerRoutes");
 const serviceRequestRoutes = require("./routes/serviceRequestRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const app = express();
+const jobRoutes = require("./routes/jobRoutes");
+const technicianRoutes = require("./routes/technicianRoutes");
+
 
 const PORT = process.env.PORT || 5000;
 
