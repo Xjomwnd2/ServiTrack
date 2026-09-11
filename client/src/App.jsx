@@ -391,8 +391,19 @@ useEffect(() => {
           </button>
 
           <button className={activePage === "serviceRequests" ? "active-menu" : ""} onClick={() => setActivePage("serviceRequests")}>Service Requests</button>
-          <button>Jobs</button>
-          <button>Technicians</button>
+          <button
+  className={activePage === "jobs" ? "active-menu" : ""}
+  onClick={() => setActivePage("jobs")}
+>
+  Jobs
+</button>
+
+<button
+  className={activePage === "technicians" ? "active-menu" : ""}
+  onClick={() => setActivePage("technicians")}
+>
+  Technicians
+</button>
         </aside>
 
         <main className="dashboard-content">
