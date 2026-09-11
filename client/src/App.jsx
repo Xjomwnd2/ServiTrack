@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import ServiceRequests from "./ServiceRequests";
 import "./App.css";
+import ServiceRequests from "./ServiceRequests";
+import Jobs from "./Jobs";
+import Technicians from "./Technicians";
 
 const API_URL = "http://localhost:5000";
 
