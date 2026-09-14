@@ -43,8 +43,8 @@ async function getAllJobs(search, status, technicianId) {
     FROM jobs j
     LEFT JOIN customers c
       ON j.customer_id = c.customer_id
-    LEFT JOIN users u
-      ON j.technician_id = u.user_id
+    LEFT JOIN technicians t
+      ON j.technician_id = t.id
     WHERE 1 = 1
   `;
 
