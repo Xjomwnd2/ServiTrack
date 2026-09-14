@@ -96,7 +96,7 @@ async function getJobById(jobId) {
       c.name AS customer_name,
       c.phone AS customer_phone,
       c.email AS customer_email,
-      u.full_name AS technician_name,
+      t.name AS technician_name,
       u.email AS technician_email
     FROM jobs j
     LEFT JOIN customers c
