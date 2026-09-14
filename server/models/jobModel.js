@@ -97,7 +97,7 @@ async function getJobById(jobId) {
       c.phone AS customer_phone,
       c.email AS customer_email,
       t.name AS technician_name,
-      u.email AS technician_email
+      t.email AS technician_email
     FROM jobs j
     LEFT JOIN customers c
       ON j.customer_id = c.customer_id
