@@ -101,8 +101,8 @@ async function getJobById(jobId) {
     FROM jobs j
     LEFT JOIN customers c
       ON j.customer_id = c.customer_id
-    LEFT JOIN users u
-      ON j.technician_id = u.user_id
+    LEFT JOIN technicians t
+  ON j.technician_id = t.id
     WHERE j.job_id = $1
     `,
     [jobId]
