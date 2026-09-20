@@ -141,7 +141,7 @@ async function updateJob(
       requestId,
       customerId,
       technicianId,
-      jobDescription
+      jobDescription,
       scheduledDate,
       scheduledTime,
       location,
