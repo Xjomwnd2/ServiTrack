@@ -4,6 +4,7 @@ const API_URL = "http://localhost:5000";
 
 function ServiceRequests() {
   const [customers, setCustomers] = useState([]);
+  const [technicians, setTechnicians] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -21,33 +22,53 @@ function ServiceRequests() {
   async function loadData() {
     const token = localStorage.getItem("token");
 
-    if (!token) return;
+    if (!token) {
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
 
     try {
-      const [customersResponse, requestsResponse] = await Promise.all([
-        fetch(`${API_URL}/api/customers`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }),
-        fetch(`${API_URL}/api/service-requests`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }),
-      ]);
+      const [customersResponse, requestsResponse, techniciansResponse] =
+        await Promise.all([
+          fetch(`${API_URL}/api/customers`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          fetch(`${API_URL}/api/service-requests`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          fetch(`${API_URL}/api/technicians`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
 
       const customersData = await customersResponse.json();
       const requestsData = await requestsResponse.json();
+      const techniciansData = await techniciansResponse.json();
 
       if (customersResponse.ok) {
-        setCustomers(customersData.customers);
+        setCustomers(customersData.customers || []);
+      } else {
+        console.error("Customer loading error:", customersData.message);
       }
 
       if (requestsResponse.ok) {
-        setRequests(requestsData.serviceRequests);
+        setRequests(requestsData.serviceRequests || []);
+      } else {
+        console.error("Service request loading error:", requestsData.message);
+      }
+
+      if (techniciansResponse.ok) {
+        setTechnicians(techniciansData.technicians || []);
+      } else {
+        console.error("Technician loading error:", techniciansData.message);
       }
     } catch (error) {
       console.error("Service request loading error:", error);
@@ -257,8 +278,7 @@ function ServiceRequests() {
 
               <label>Assigned Technician</label>
 
-              <input
-                type="text"
+              <select
                 value={formData.assignedTechnician}
                 onChange={(event) =>
                   setFormData({
@@ -266,8 +286,18 @@ function ServiceRequests() {
                     assignedTechnician: event.target.value,
                   })
                 }
-                placeholder="Enter technician name"
-              />
+              >
+                <option value="">Unassigned</option>
+
+                {technicians.map((technician) => (
+                  <option
+                    key={technician.user_id}
+                    value={technician.user_id}
+                  >
+                    {technician.full_name}
+                  </option>
+                ))}
+              </select>
 
               <label>Notes</label>
 
@@ -319,21 +349,15 @@ function ServiceRequests() {
                 {requests.map((request) => (
                   <tr key={request.request_id}>
                     <td>{request.customer_name}</td>
-
                     <td>{request.description}</td>
-
                     <td>
                       {new Date(
                         request.date_requested
                       ).toLocaleDateString()}
                     </td>
-
                     <td>{request.priority}</td>
-
                     <td>{request.status}</td>
-
-                    <td>{request.assigned_technician || "-"}</td>
-
+                    <td>{request.technician_name || "-"}</td>
                     <td>
                       <button
                         className="delete-button"
