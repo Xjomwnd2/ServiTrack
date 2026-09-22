@@ -39,7 +39,7 @@ async function getAllJobs(search, status, technicianId) {
       j.*,
       c.name AS customer_name,
       c.phone AS customer_phone,
-      u.full_name AS technician_name
+      t.name AS technician_name
     FROM jobs j
     LEFT JOIN customers c
       ON j.customer_id = c.customer_id
@@ -102,7 +102,7 @@ async function getJobById(jobId) {
     LEFT JOIN customers c
       ON j.customer_id = c.customer_id
     LEFT JOIN technicians t
-  ON j.technician_id = t.id
+      ON j.technician_id = t.id
     WHERE j.job_id = $1
     `,
     [jobId]
