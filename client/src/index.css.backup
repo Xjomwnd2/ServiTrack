@@ -7,8 +7,8 @@
     "Segoe UI",
     sans-serif;
 
-  color: #0f172a;
-  background: #f1f5f9;
+  color: #111827;
+  background: #f5f7fb;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -23,7 +23,6 @@
 html,
 body,
 #root {
-  width: 100%;
   min-width: 100%;
   min-height: 100%;
 }
@@ -34,7 +33,7 @@ html {
 
 body {
   margin: 0;
-  background: #f1f5f9;
+  background: #f5f7fb;
 }
 
 button,

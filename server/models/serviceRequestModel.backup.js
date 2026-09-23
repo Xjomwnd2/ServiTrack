@@ -6,29 +6,21 @@ async function createServiceRequest(
   dateRequested,
   priority,
   status,
-  assignedTechnicianId,
+  assignedTechnician,
   notes
 ) {
   const result = await pool.query(
     `INSERT INTO service_requests
-      (
-        customer_id,
-        description,
-        date_requested,
-        priority,
-        status,
-        assigned_technician_id,
-        notes
-      )
+      (customer_id, description, date_requested, priority, status, assigned_technician, notes)
      VALUES ($1, $2, $3, $4, $5, $6, $7)
      RETURNING *`,
     [
       customerId,
       description,
       dateRequested,
-      priority.toLowerCase(),
-      status.toLowerCase().replace(" ", "_"),
-      assignedTechnicianId || null,
+      priority,
+      status,
+      assignedTechnician,
       notes,
     ]
   );
@@ -40,13 +32,10 @@ async function getAllServiceRequests() {
   const result = await pool.query(
     `SELECT
         sr.*,
-        c.name AS customer_name,
-        u.full_name AS technician_name
+        c.name AS customer_name
      FROM service_requests sr
      JOIN customers c
        ON sr.customer_id = c.customer_id
-     LEFT JOIN users u
-       ON sr.assigned_technician_id = u.user_id
      ORDER BY sr.date_requested DESC`
   );
 
@@ -57,13 +46,10 @@ async function getServiceRequestById(requestId) {
   const result = await pool.query(
     `SELECT
         sr.*,
-        c.name AS customer_name,
-        u.full_name AS technician_name
+        c.name AS customer_name
      FROM service_requests sr
      JOIN customers c
        ON sr.customer_id = c.customer_id
-     LEFT JOIN users u
-       ON sr.assigned_technician_id = u.user_id
      WHERE sr.request_id = $1`,
     [requestId]
   );
@@ -78,7 +64,7 @@ async function updateServiceRequest(
   dateRequested,
   priority,
   status,
-  assignedTechnicianId,
+  assignedTechnician,
   notes
 ) {
   const result = await pool.query(
@@ -88,18 +74,17 @@ async function updateServiceRequest(
          date_requested = $3,
          priority = $4,
          status = $5,
-         assigned_technician_id = $6,
-         notes = $7,
-         updated_at = CURRENT_TIMESTAMP
+         assigned_technician = $6,
+         notes = $7
      WHERE request_id = $8
      RETURNING *`,
     [
       customerId,
       description,
       dateRequested,
-      priority.toLowerCase(),
-      status.toLowerCase().replace(" ", "_"),
-      assignedTechnicianId || null,
+      priority,
+      status,
+      assignedTechnician,
       notes,
       requestId,
     ]
