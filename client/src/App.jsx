@@ -88,6 +88,7 @@ async function loadDashboard() {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+          cache: "no-store",
       });
 
       const data = await response.json();
