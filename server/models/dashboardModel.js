@@ -6,6 +6,9 @@ async function getDashboardStats() {
     customersResult,
     requestsResult,
     pendingRequestsResult,
+    newRequestsResult,
+    scheduledJobsResult,
+    upcomingAppointmentsResult,
     jobsResult,
     completedJobsResult,
     activeTechniciansResult,
@@ -30,6 +33,39 @@ async function getDashboardStats() {
       SELECT COUNT(*)::int AS total
       FROM service_requests
       WHERE status IN ('new', 'scheduled', 'in_progress')
+    `),
+
+    // New requests only
+    pool.query(`
+      SELECT COUNT(*)::int AS total
+      FROM service_requests
+      WHERE status = 'new'
+    `),
+
+    // Scheduled jobs only
+    pool.query(`
+      SELECT COUNT(*)::int AS total
+      FROM jobs
+      WHERE status = 'scheduled'
+    `),
+
+    // Upcoming appointments (future service requests)
+    pool.query(`
+      SELECT
+        sr.request_id,
+        sr.description,
+        sr.date_requested,
+        sr.priority,
+        c.name AS customer_name,
+        u.full_name AS assigned_technician
+      FROM service_requests sr
+      LEFT JOIN customers c
+        ON sr.customer_id = c.customer_id
+      LEFT JOIN users u
+        ON sr.assigned_technician_id = u.user_id
+      WHERE sr.date_requested >= CURRENT_DATE
+      ORDER BY sr.date_requested ASC
+      LIMIT 5
     `),
 
     // Total jobs
@@ -109,6 +145,9 @@ async function getDashboardStats() {
     totalCustomers: customersResult.rows[0].total,
     totalRequests: requestsResult.rows[0].total,
     pendingRequests: pendingRequestsResult.rows[0].total,
+    newRequests: newRequestsResult.rows[0].total,
+    scheduledJobs: scheduledJobsResult.rows[0].total,
+    upcomingAppointments: upcomingAppointmentsResult.rows,
     totalJobs: jobsResult.rows[0].total,
     completedJobs: completedJobsResult.rows[0].total,
     activeTechnicians: activeTechniciansResult.rows[0].total,
