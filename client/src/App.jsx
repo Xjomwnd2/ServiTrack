@@ -420,22 +420,22 @@ useEffect(() => {
               <div className="stats-grid">
                 <div className="stat-card">
                   <h3>Total Customers</h3>
-                  <strong>{dashboardData.stats.total_customers}</strong>
+                  <strong>{dashboardData.stats?.total_customers ?? 0}</strong>
                 </div>
 
                 <div className="stat-card">
                   <h3>New Requests</h3>
-                  <strong>{dashboardData.stats.new_requests}</strong>
+                  <strong>{dashboardData.stats?.new_requests ?? 0}</strong>
                 </div>
 
                 <div className="stat-card">
                   <h3>Scheduled Jobs</h3>
-                  <strong>{dashboardData.stats.scheduled_jobs}</strong>
+                  <strong>{dashboardData.stats?.scheduled_jobs ?? 0}</strong>
                 </div>
 
                 <div className="stat-card">
                   <h3>Completed Jobs</h3>
-                  <strong>{dashboardData.stats.completed_jobs}</strong>
+                  <strong>{dashboardData.stats?.completed_jobs ?? 0}</strong>
                 </div>
               </div>
 
