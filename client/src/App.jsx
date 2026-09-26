@@ -97,7 +97,31 @@ async function loadDashboard() {
         return;
       }
 
-      setDashboardData(data);
+      setDashboardData({
+
+
+        stats: {
+
+
+          total_customers: data.stats?.total_customers ?? 0,
+
+
+          new_requests: data.stats?.new_requests ?? 0,
+
+
+          scheduled_jobs: data.stats?.scheduled_jobs ?? 0,
+
+
+          completed_jobs: data.stats?.completed_jobs ?? 0,
+
+
+        },
+
+
+        appointments: data.appointments ?? [],
+
+
+      });
     } catch (error) {
       console.error("Dashboard loading error:", error);
     } finally {
