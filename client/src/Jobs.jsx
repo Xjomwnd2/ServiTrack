@@ -234,19 +234,28 @@ function Jobs() {
   }
 
   async function handleStatusChange(jobId, newStatus) {
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
-    try {
-      const response = await fetch(`${API_URL}/api/jobs/${jobId}/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          status: newStatus,
-        }),
-      });
+  const notes = window.prompt(
+    `Add a note for changing status to "${formatStatus(newStatus)}" (optional):`,
+    ""
+  );
+
+  // If the user clicks Cancel on the prompt, don't change anything
+  if (notes === null) return;
+
+  try {
+    const response = await fetch(`${API_URL}/api/jobs/${jobId}/status`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        status: newStatus,
+        notes: notes.trim() || null,
+      }),
+    });
 
       const data = await response.json();
 
