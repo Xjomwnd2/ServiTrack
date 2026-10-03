@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Usage: ./db_stats.sh [path/to/.env]
 
-ENV_FILE="${1:-server/.env}"
+ENV_FILE="${1:-$(dirname "$0")/server/.env}"
 
 if [[ ! -f "$ENV_FILE" ]]; then
   echo "Error: env file '$ENV_FILE' not found." >&2
