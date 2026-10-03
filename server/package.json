@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "start": "node index.js"
-    "db:stats": "bash ../db_stats.sh"
+    "start": "node index.js",
+    "db:stats": "bash ../db_stats.sh",
   },
   "keywords": [],
   "author": "",
