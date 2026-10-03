@@ -8,6 +8,8 @@ const serviceRequestRoutes = require("./routes/serviceRequestRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const jobRoutes = require("./routes/jobRoutes");
 const technicianRoutes = require("./routes/technicianRoutes");
+const statsRoutes = require("./routes/stats");
+app.use("/api/stats", statsRoutes);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
