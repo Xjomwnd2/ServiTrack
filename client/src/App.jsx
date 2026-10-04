@@ -32,6 +32,7 @@ function App() {
 });
 
 const [loadingDashboard, setLoadingDashboard] = useState(false);
+const [dashboardError, setDashboardError] = useState("");
 
   const [showAddForm, setShowAddForm] = useState(false);
 
