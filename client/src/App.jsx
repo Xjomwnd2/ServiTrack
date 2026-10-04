@@ -439,8 +439,8 @@ useEffect(() => {
               <p className="welcome">
                 Welcome back, {user.full_name}!
               </p>
-              
-<             <div className="dashboard-section">
+
+        <div className="dashboard-section">
                 <h2>Upcoming Jobs</h2>
 
                 {loadingDashboard ? (
