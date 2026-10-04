@@ -445,9 +445,11 @@ useEffect(() => {
                 </p>
               )}
 
-        <div className="dashboard-section">
-                <h2>Upcoming Jobs</h2>
+              <div className="stats-grid">
 
+<div className="dashboard-section">
+                <h2>Upcoming Jobs</h2>
+                
                 {loadingDashboard ? (
                   <p>Loading upcoming jobs...</p>
                 ) : dashboardError ? (
@@ -485,7 +487,7 @@ useEffect(() => {
                   </div>
                 )}
               </div>
-              <div className="stats-grid">
+
                 <div className="stat-card">
                   <h3>Total Customers</h3>
                   <strong>{dashboardData.stats?.total_customers ?? 0}</strong>
