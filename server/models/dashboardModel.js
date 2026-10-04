@@ -85,7 +85,6 @@ async function getDashboardStats() {
     pool.query(`
       SELECT COUNT(*)::int AS total
       FROM technicians
-      WHERE role = 'technician'
     `),
 
     // Monthly job performance for the current year
