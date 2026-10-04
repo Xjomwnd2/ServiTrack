@@ -9,7 +9,6 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const jobRoutes = require("./routes/jobRoutes");
 const technicianRoutes = require("./routes/technicianRoutes");
 const statsRoutes = require("./routes/stats");
-app.use("/api/stats", statsRoutes);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -32,6 +31,7 @@ app.use("/api/service-requests", serviceRequestRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/technicians", technicianRoutes);
+app.use("/api/stats", statsRoutes);
 
 // Start server
 app.listen(PORT, () => {
