@@ -428,6 +428,14 @@ useEffect(() => {
 >
   Technicians
 </button>
+          {user.role === "admin" && (
+            <button
+              className={activePage === "stats" ? "active-menu" : ""}
+              onClick={() => setActivePage("stats")}
+            >
+              Stats
+            </button>
+          )}
         </aside>
 
         <main className="dashboard-content">
