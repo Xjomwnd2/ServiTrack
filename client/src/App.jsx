@@ -436,9 +436,11 @@ useEffect(() => {
             <>
               <h1>Dashboard</h1>
 
-              <p className="welcome">
-                Welcome back, {user.full_name}!
-              </p>
+              {dashboardError && (
+                <p style={{ color: "#b91c1c", fontWeight: 600 }}>
+                  {dashboardError}
+                </p>
+              )}
 
         <div className="dashboard-section">
                 <h2>Upcoming Jobs</h2>
