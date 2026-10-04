@@ -436,12 +436,10 @@ useEffect(() => {
             <>
               <h1>Dashboard</h1>
 
-              {dashboardError && (
-                <p style={{ color: "#b91c1c", fontWeight: 600 }}>
-                 {dashboardError}
+              <p className="welcome">
+                Welcome back, {user.full_name}!
               </p>
-              )}
-              
+
               <div className="stats-grid">
                 <div className="stat-card">
                   <h3>Total Customers</h3>
