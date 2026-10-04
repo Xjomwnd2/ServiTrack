@@ -2,6 +2,9 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+const authenticateToken = require("./middleware/authMiddleware");
+const { adminOnly } = authenticateToken;
+
 const authRoutes = require("./routes/authRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const serviceRequestRoutes = require("./routes/serviceRequestRoutes");
@@ -31,7 +34,9 @@ app.use("/api/service-requests", serviceRequestRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/technicians", technicianRoutes);
-app.use("/api/stats", statsRoutes);
+
+// Admin-only: database statistics
+app.use("/api/stats", authenticateToken, adminOnly, statsRoutes);
 
 // Start server
 app.listen(PORT, () => {
