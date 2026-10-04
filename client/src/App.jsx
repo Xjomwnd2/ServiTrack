@@ -442,6 +442,7 @@ useEffect(() => {
           {activePage === "serviceRequests" && <ServiceRequests />}
           {activePage === "jobs" && <Jobs />}
           {activePage === "technicians" && <Technicians />}
+          {activePage === "stats" && <Stats />}
           {activePage === "dashboard" && (
             <>
               <h1>Dashboard</h1>
