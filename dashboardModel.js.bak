@@ -49,23 +49,23 @@ async function getDashboardStats() {
       WHERE status = 'scheduled'
     `),
 
-    // Upcoming jobs: scheduled today or later, not finished
+    // Upcoming appointments (future service requests)
     pool.query(`
       SELECT
-        j.job_id,
-        j.job_description,
-        TO_CHAR(j.scheduled_date, 'YYYY-MM-DD') AS scheduled_date,
-        TO_CHAR(j.scheduled_time, 'HH24:MI') AS scheduled_time,
-        j.status,
+        sr.request_id,
+        sr.description,
+        sr.date_requested,
+        sr.priority,
         c.name AS customer_name,
-        t.name AS technician_name
-      FROM jobs j
-      LEFT JOIN customers c ON j.customer_id = c.customer_id
-      LEFT JOIN technicians t ON j.technician_id = t.id
-      WHERE j.scheduled_date >= CURRENT_DATE
-        AND j.status NOT IN ('completed', 'cancelled', 'canceled')
-      ORDER BY j.scheduled_date ASC, j.scheduled_time ASC NULLS LAST
-      LIMIT 10
+        u.full_name AS assigned_technician
+      FROM service_requests sr
+      LEFT JOIN customers c
+        ON sr.customer_id = c.customer_id
+      LEFT JOIN users u
+        ON sr.assigned_technician_id = u.user_id
+      WHERE sr.date_requested >= CURRENT_DATE
+      ORDER BY sr.date_requested ASC
+      LIMIT 5
     `),
 
     // Total jobs
