@@ -78,55 +78,42 @@ const [dashboardError, setDashboardError] = useState("");
     }
   }
 
-async function loadDashboard() {
+  async function loadDashboard() {
     const token = localStorage.getItem("token");
 
     if (!token) return;
 
     setLoadingDashboard(true);
+    setDashboardError("");
 
     try {
       const response = await fetch(`${API_URL}/api/dashboard`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-          cache: "no-store",
+        cache: "no-store",
       });
 
       const data = await response.json();
 
       if (!response.ok) {
         console.error(data.message);
+        setDashboardError(data.message || "Could not load the dashboard.");
         return;
       }
 
       setDashboardData({
-
-
         stats: {
-
-
           total_customers: data.stats?.total_customers ?? 0,
-
-
           new_requests: data.stats?.new_requests ?? 0,
-
-
           scheduled_jobs: data.stats?.scheduled_jobs ?? 0,
-
-
           completed_jobs: data.stats?.completed_jobs ?? 0,
-
-
         },
-
-
         appointments: data.appointments ?? [],
-
-
       });
     } catch (error) {
       console.error("Dashboard loading error:", error);
+      setDashboardError("Unable to connect to the ServiTrack server.");
     } finally {
       setLoadingDashboard(false);
     }
