@@ -439,7 +439,47 @@ useEffect(() => {
               <p className="welcome">
                 Welcome back, {user.full_name}!
               </p>
+              
+<             <div className="dashboard-section">
+                <h2>Upcoming Jobs</h2>
 
+                {loadingDashboard ? (
+                  <p>Loading upcoming jobs...</p>
+                ) : dashboardError ? (
+                  <p>Upcoming jobs could not be loaded.</p>
+                ) : dashboardData.appointments.length === 0 ? (
+                  <p>No upcoming jobs. Schedule a job on the Jobs page and it will appear here.</p>
+                ) : (
+                  <div className="customer-table-wrapper">
+                    <table className="customer-table">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Job</th>
+                          <th>Customer</th>
+                          <th>Technician</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {dashboardData.appointments.map((job) => (
+                          <tr key={job.job_id}>
+                            <td>
+                              {new Date(job.scheduled_date + "T00:00:00").toLocaleDateString()}
+                              {job.scheduled_time ? ", " + job.scheduled_time : ""}
+                            </td>
+                            <td>{job.job_description}</td>
+                            <td>{job.customer_name || "-"}</td>
+                            <td>{job.technician_name || "Unassigned"}</td>
+                            <td>{job.status}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
               <div className="stats-grid">
                 <div className="stat-card">
                   <h3>Total Customers</h3>
