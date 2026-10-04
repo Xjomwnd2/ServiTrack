@@ -435,6 +435,9 @@ useEffect(() => {
           {activePage === "dashboard" && (
             <>
               <h1>Dashboard</h1>
+              <p className="welcome">
+                Welcome back, {user.full_name}!
+              </p>
 
               {dashboardError && (
                 <p style={{ color: "#b91c1c", fontWeight: 600 }}>
