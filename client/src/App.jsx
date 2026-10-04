@@ -507,8 +507,9 @@ useEffect(() => {
                   </div>
                 )}
               </div>
+              </>
+              )}
 
-              
           {activePage === "customers" && (
             <>
               <div className="page-heading">
