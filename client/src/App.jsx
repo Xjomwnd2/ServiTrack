@@ -3,6 +3,7 @@ import ServiceRequests from "./ServiceRequests";
 import "./App.css";
 import Jobs from "./Jobs";
 import Technicians from "./Technicians";
+import Stats from "./Stats";
 
 const API_URL = "http://localhost:5000";
 
