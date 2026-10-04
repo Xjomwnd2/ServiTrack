@@ -84,7 +84,7 @@ async function getDashboardStats() {
     // Active technicians
     pool.query(`
       SELECT COUNT(*)::int AS total
-      FROM users
+      FROM technicians
       WHERE role = 'technician'
     `),
 
