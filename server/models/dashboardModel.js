@@ -111,12 +111,12 @@ async function getDashboardStats() {
         j.scheduled_time,
         j.status,
         c.name AS customer_name,
-        u.full_name AS technician_name
+        t.name AS technician_name
       FROM jobs j
       LEFT JOIN customers c
         ON j.customer_id = c.customer_id
-      LEFT JOIN users u
-        ON j.technician_id = u.user_id
+      LEFT JOIN technicians t
+        ON j.technician_id = t.id
       ORDER BY j.created_at DESC
       LIMIT 5
     `),
