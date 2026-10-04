@@ -316,6 +316,7 @@ async function loadDashboard() {
   if (user) {
     loadCustomers();
     loadDashboard();
+  }
 }, [user]);
 
 useEffect(() => {
