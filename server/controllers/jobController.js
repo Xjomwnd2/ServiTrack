@@ -141,7 +141,7 @@ async function editJob(req, res) {
 async function changeJobStatus(req, res) {
   try {
     const { status, notes } = req.body;
-    const changedBy = req.user?.user_id || null;
+    const changedBy = req.user?.userId || null;
 
     if (!status) {
       return res.status(400).json({

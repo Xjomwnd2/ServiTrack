@@ -1,34 +1,37 @@
 const pool = require("../db");
 
 // Create a technician
-async function createTechnician(fullName, email, passwordHash) {
+async function createTechnician(name, phone, email, specialization, status) {
   const result = await pool.query(
     `
-    INSERT INTO users (full_name, email, password_hash, role)
-    VALUES ($1, $2, $3, 'technician')
-    RETURNING user_id, full_name, email, role, created_at
+    INSERT INTO technicians (name, phone, email, specialization, status)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING id, name, phone, email, specialization, status
     `,
-    [fullName, email, passwordHash]
+    [name, phone, email, specialization, status]
   );
 
   return result.rows[0];
 }
 
 // Get all technicians
-async function getAllTechnicians() {
-  const result = await pool.query(
-    `
-    SELECT
-      user_id,
-      full_name,
-      email,
-      role,
-      created_at
-    FROM users
-    WHERE role = 'technician'
-    ORDER BY full_name ASC
-    `
-  );
+async function getAllTechnicians(search) {
+  let query = `
+    SELECT id, name, phone, email, specialization, status
+    FROM technicians
+    WHERE 1 = 1
+  `;
+
+  const values = [];
+
+  if (search) {
+    query += ` AND name ILIKE $1`;
+    values.push(`%${search}%`);
+  }
+
+  query += ` ORDER BY name ASC`;
+
+  const result = await pool.query(query, values);
 
   return result.rows;
 }
@@ -37,15 +40,9 @@ async function getAllTechnicians() {
 async function getTechnicianById(technicianId) {
   const result = await pool.query(
     `
-    SELECT
-      user_id,
-      full_name,
-      email,
-      role,
-      created_at
-    FROM users
-    WHERE user_id = $1
-      AND role = 'technician'
+    SELECT id, name, phone, email, specialization, status
+    FROM technicians
+    WHERE id = $1
     `,
     [technicianId]
   );
@@ -54,18 +51,20 @@ async function getTechnicianById(technicianId) {
 }
 
 // Update technician
-async function updateTechnician(technicianId, fullName, email) {
+async function updateTechnician(technicianId, name, phone, email, specialization, status) {
   const result = await pool.query(
     `
-    UPDATE users
+    UPDATE technicians
     SET
-      full_name = $1,
-      email = $2
-    WHERE user_id = $3
-      AND role = 'technician'
-    RETURNING user_id, full_name, email, role, created_at
+      name = $1,
+      phone = $2,
+      email = $3,
+      specialization = $4,
+      status = $5
+    WHERE id = $6
+    RETURNING id, name, phone, email, specialization, status
     `,
-    [fullName, email, technicianId]
+    [name, phone, email, specialization, status, technicianId]
   );
 
   return result.rows[0];
@@ -75,10 +74,9 @@ async function updateTechnician(technicianId, fullName, email) {
 async function deleteTechnician(technicianId) {
   const result = await pool.query(
     `
-    DELETE FROM users
-    WHERE user_id = $1
-      AND role = 'technician'
-    RETURNING user_id, full_name, email, role
+    DELETE FROM technicians
+    WHERE id = $1
+    RETURNING id, name, phone, email, specialization, status
     `,
     [technicianId]
   );
@@ -87,7 +85,7 @@ async function deleteTechnician(technicianId) {
 }
 
 // Get jobs assigned to a technician
-async function getTechnicianJobs(technicianId) {
+async function getJobsByTechnicianId(technicianId) {
   const result = await pool.query(
     `
     SELECT
@@ -112,5 +110,5 @@ module.exports = {
   getTechnicianById,
   updateTechnician,
   deleteTechnician,
-  getTechnicianJobs,
+  getJobsByTechnicianId,
 };

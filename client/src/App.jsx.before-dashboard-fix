@@ -3,7 +3,6 @@ import ServiceRequests from "./ServiceRequests";
 import "./App.css";
 import Jobs from "./Jobs";
 import Technicians from "./Technicians";
-import Stats from "./Stats";
 
 const API_URL = "http://localhost:5000";
 
@@ -32,7 +31,6 @@ function App() {
 });
 
 const [loadingDashboard, setLoadingDashboard] = useState(false);
-const [dashboardError, setDashboardError] = useState("");
 
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -78,42 +76,30 @@ const [dashboardError, setDashboardError] = useState("");
     }
   }
 
-  async function loadDashboard() {
+async function loadDashboard() {
     const token = localStorage.getItem("token");
 
     if (!token) return;
 
     setLoadingDashboard(true);
-    setDashboardError("");
 
     try {
       const response = await fetch(`${API_URL}/api/dashboard`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        cache: "no-store",
       });
 
       const data = await response.json();
 
       if (!response.ok) {
         console.error(data.message);
-        setDashboardError(data.message || "Could not load the dashboard.");
         return;
       }
 
-      setDashboardData({
-        stats: {
-          total_customers: data.stats?.total_customers ?? 0,
-          new_requests: data.stats?.new_requests ?? 0,
-          scheduled_jobs: data.stats?.scheduled_jobs ?? 0,
-          completed_jobs: data.stats?.completed_jobs ?? 0,
-        },
-        appointments: data.appointments ?? [],
-      });
+      setDashboardData(data);
     } catch (error) {
       console.error("Dashboard loading error:", error);
-      setDashboardError("Unable to connect to the ServiTrack server.");
     } finally {
       setLoadingDashboard(false);
     }
@@ -417,98 +403,83 @@ useEffect(() => {
 >
   Technicians
 </button>
-          {user.role === "admin" && (
-            <button
-              className={activePage === "stats" ? "active-menu" : ""}
-              onClick={() => setActivePage("stats")}
-            >
-              Stats
-            </button>
-          )}
         </aside>
 
         <main className="dashboard-content">
           {activePage === "serviceRequests" && <ServiceRequests />}
           {activePage === "jobs" && <Jobs />}
           {activePage === "technicians" && <Technicians />}
-          {activePage === "stats" && <Stats />}
           {activePage === "dashboard" && (
             <>
               <h1>Dashboard</h1>
+
               <p className="welcome">
                 Welcome back, {user.full_name}!
               </p>
 
-              {dashboardError && (
-                <p style={{ color: "#b91c1c", fontWeight: 600 }}>
-                  {dashboardError}
-                </p>
-              )}
-
               <div className="stats-grid">
                 <div className="stat-card">
                   <h3>Total Customers</h3>
-                  <strong>{dashboardData.stats?.total_customers ?? 0}</strong>
+                  <strong>{dashboardData.stats.total_customers}</strong>
                 </div>
 
                 <div className="stat-card">
                   <h3>New Requests</h3>
-                  <strong>{dashboardData.stats?.new_requests ?? 0}</strong>
+                  <strong>{dashboardData.stats.new_requests}</strong>
                 </div>
 
                 <div className="stat-card">
                   <h3>Scheduled Jobs</h3>
-                  <strong>{dashboardData.stats?.scheduled_jobs ?? 0}</strong>
+                  <strong>{dashboardData.stats.scheduled_jobs}</strong>
                 </div>
 
                 <div className="stat-card">
                   <h3>Completed Jobs</h3>
-                  <strong>{dashboardData.stats?.completed_jobs ?? 0}</strong>
+                  <strong>{dashboardData.stats.completed_jobs}</strong>
                 </div>
               </div>
 
               <div className="dashboard-section">
-                <h2>Upcoming Jobs</h2>
+  <h2>Upcoming Appointments</h2>
 
-                {loadingDashboard ? (
-                  <p>Loading upcoming jobs...</p>
-                ) : dashboardError ? (
-                  <p>Upcoming jobs could not be loaded.</p>
-                ) : dashboardData.appointments.length === 0 ? (
-                  <p>No upcoming jobs. Schedule a job on the Jobs page and it will appear here.</p>
-                ) : (
-                  <div className="customer-table-wrapper">
-                    <table className="customer-table">
-                      <thead>
-                        <tr>
-                          <th>Date</th>
-                          <th>Job</th>
-                          <th>Customer</th>
-                          <th>Technician</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
+  {loadingDashboard ? (
+    <p>Loading appointments...</p>
+  ) : dashboardData.appointments.length === 0 ? (
+    <p>No upcoming appointments.</p>
+  ) : (
+    <div className="customer-table-wrapper">
+      <table className="customer-table">
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Service</th>
+            <th>Date</th>
+            <th>Priority</th>
+            <th>Technician</th>
+          </tr>
+        </thead>
 
-                      <tbody>
-                        {dashboardData.appointments.map((job) => (
-                          <tr key={job.job_id}>
-                            <td>
-                              {new Date(job.scheduled_date + "T00:00:00").toLocaleDateString()}
-                              {job.scheduled_time ? ", " + job.scheduled_time : ""}
-                            </td>
-                            <td>{job.job_description}</td>
-                            <td>{job.customer_name || "-"}</td>
-                            <td>{job.technician_name || "Unassigned"}</td>
-                            <td>{job.status}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-              </>
-              )}
+        <tbody>
+          {dashboardData.appointments.map((appointment) => (
+            <tr key={appointment.request_id}>
+              <td>{appointment.customer_name}</td>
+              <td>{appointment.description}</td>
+              <td>
+                {new Date(
+                  appointment.date_requested
+                ).toLocaleDateString()}
+              </td>
+              <td>{appointment.priority}</td>
+              <td>{appointment.assigned_technician || "-"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</div>
+            </>
+          )}
 
           {activePage === "customers" && (
             <>
