@@ -21,6 +21,9 @@ function authenticateToken(req, res, next) {
 
     next();
   } catch (error) {
+    // Temporary diagnostic logging: never log the actual token or secret.
+    console.error("JWT verification failed:", error.message);
+
     return res.status(403).json({
       message: "Invalid or expired authentication token.",
     });
@@ -31,7 +34,10 @@ function adminOnly(req, res, next) {
   if (req.user && req.user.role === "admin") {
     return next();
   }
-  return res.status(403).json({ message: "Admin access required." });
+
+  return res.status(403).json({
+    message: "Admin access required.",
+  });
 }
 
 module.exports = authenticateToken;
