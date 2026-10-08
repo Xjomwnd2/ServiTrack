@@ -22,17 +22,17 @@ function App() {
   const [customerSearch, setCustomerSearch] = useState("");
   const [loadingCustomers, setLoadingCustomers] = useState(false);
   const [dashboardData, setDashboardData] = useState({
-  stats: {
-    total_customers: 0,
-    new_requests: 0,
-    scheduled_jobs: 0,
-    completed_jobs: 0,
-  },
-  appointments: [],
-});
+    stats: {
+      total_customers: 0,
+      new_requests: 0,
+      scheduled_jobs: 0,
+      completed_jobs: 0,
+    },
+    appointments: [],
+  });
 
-const [loadingDashboard, setLoadingDashboard] = useState(false);
-const [dashboardError, setDashboardError] = useState("");
+  const [loadingDashboard, setLoadingDashboard] = useState(false);
+  const [dashboardError, setDashboardError] = useState("");
 
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -60,7 +60,7 @@ const [dashboardError, setDashboardError] = useState("");
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = await response.json();
@@ -243,7 +243,7 @@ const [dashboardError, setDashboardError] = useState("");
             address: editingCustomer.address,
             notes: editingCustomer.notes,
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -266,7 +266,7 @@ const [dashboardError, setDashboardError] = useState("");
 
   async function handleDeleteCustomer(customerId, customerName) {
     const confirmed = window.confirm(
-      `Are you sure you want to delete ${customerName}?`
+      `Are you sure you want to delete ${customerName}?`,
     );
 
     if (!confirmed) return;
@@ -274,15 +274,12 @@ const [dashboardError, setDashboardError] = useState("");
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch(
-        `${API_URL}/api/customers/${customerId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_URL}/api/customers/${customerId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const data = await response.json();
 
@@ -301,17 +298,17 @@ const [dashboardError, setDashboardError] = useState("");
   }
 
   useEffect(() => {
-  if (user) {
-    loadCustomers();
-    loadDashboard();
-  }
-}, [user]);
+    if (user) {
+      loadCustomers();
+      loadDashboard();
+    }
+  }, [user]);
 
-useEffect(() => {
-  if (user && activePage === "dashboard") {
-    loadDashboard();
-  }
-}, [user, activePage]);
+  useEffect(() => {
+    if (user && activePage === "dashboard") {
+      loadDashboard();
+    }
+  }, [user, activePage]);
 
   if (!user) {
     return (
@@ -403,20 +400,25 @@ useEffect(() => {
             Customers
           </button>
 
-          <button className={activePage === "serviceRequests" ? "active-menu" : ""} onClick={() => setActivePage("serviceRequests")}>Service Requests</button>
           <button
-  className={activePage === "jobs" ? "active-menu" : ""}
-  onClick={() => setActivePage("jobs")}
->
-  Jobs
-</button>
+            className={activePage === "serviceRequests" ? "active-menu" : ""}
+            onClick={() => setActivePage("serviceRequests")}
+          >
+            Service Requests
+          </button>
+          <button
+            className={activePage === "jobs" ? "active-menu" : ""}
+            onClick={() => setActivePage("jobs")}
+          >
+            Jobs
+          </button>
 
-<button
-  className={activePage === "technicians" ? "active-menu" : ""}
-  onClick={() => setActivePage("technicians")}
->
-  Technicians
-</button>
+          <button
+            className={activePage === "technicians" ? "active-menu" : ""}
+            onClick={() => setActivePage("technicians")}
+          >
+            Technicians
+          </button>
           {user.role === "admin" && (
             <button
               className={activePage === "stats" ? "active-menu" : ""}
@@ -435,9 +437,7 @@ useEffect(() => {
           {activePage === "dashboard" && (
             <>
               <h1>Dashboard</h1>
-              <p className="welcome">
-                Welcome back, {user.full_name}!
-              </p>
+              <p className="welcome">Welcome back, {user.full_name}!</p>
 
               {dashboardError && (
                 <p style={{ color: "#b91c1c", fontWeight: 600 }}>
@@ -475,7 +475,10 @@ useEffect(() => {
                 ) : dashboardError ? (
                   <p>Upcoming jobs could not be loaded.</p>
                 ) : dashboardData.appointments.length === 0 ? (
-                  <p>No upcoming jobs. Schedule a job on the Jobs page and it will appear here.</p>
+                  <p>
+                    No upcoming jobs. Schedule a job on the Jobs page and it
+                    will appear here.
+                  </p>
                 ) : (
                   <div className="customer-table-wrapper">
                     <table className="customer-table">
@@ -493,8 +496,12 @@ useEffect(() => {
                         {dashboardData.appointments.map((job) => (
                           <tr key={job.job_id}>
                             <td>
-                              {new Date(job.scheduled_date + "T00:00:00").toLocaleDateString()}
-                              {job.scheduled_time ? ", " + job.scheduled_time : ""}
+                              {new Date(
+                                job.scheduled_date + "T00:00:00",
+                              ).toLocaleDateString()}
+                              {job.scheduled_time
+                                ? ", " + job.scheduled_time
+                                : ""}
                             </td>
                             <td>{job.job_description}</td>
                             <td>{job.customer_name || "-"}</td>
@@ -507,8 +514,8 @@ useEffect(() => {
                   </div>
                 )}
               </div>
-              </>
-              )}
+            </>
+          )}
 
           {activePage === "customers" && (
             <>
@@ -757,7 +764,7 @@ useEffect(() => {
                                   onClick={() =>
                                     handleDeleteCustomer(
                                       customer.customer_id,
-                                      customer.name
+                                      customer.name,
                                     )
                                   }
                                 >
