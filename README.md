@@ -44,6 +44,152 @@ This can make it difficult to:
 ---
 
 ## Current Features
+## Completed Features and Enhancements
+
+ServiTrack has implemented the core functionality and planned enhancements needed to support customer management and service business operations.
+
+### Authentication
+
+- User registration and login
+- JWT-based authentication
+- Protected API routes
+- User logout
+- Persistent login using browser local storage
+- Password hashing using bcrypt
+
+### Customer Management and Search
+
+- Add, view, edit, and delete customer records
+- Search customer information
+- Store customer names, phone numbers, email addresses, addresses, and notes
+
+### Service Request Management
+
+- Create and view service requests
+- Delete service requests
+- Track request dates, descriptions, priorities, and statuses
+- Associate service requests with customers and assigned technicians
+
+Supported priority levels include Low, Medium, High, and Urgent.
+
+Supported service request statuses include New, Scheduled, In Progress, Completed, and Cancelled.
+
+### Dashboard API and User Interface
+
+- Dashboard API development
+- Dashboard user interface
+- Database-backed business statistics
+- Upcoming jobs functionality
+- Frontend and backend API integration
+
+The dashboard provides a central view of relevant business information and service activities.
+
+### Technician Management
+
+- Technician management functionality
+- Support for technician-related service operations
+
+### Job Assignment
+
+- Job assignment functionality
+- Integration between technician and job workflows
+
+### Advanced Search and Filtering
+
+- Enhanced search and filtering capabilities for locating relevant service management records
+
+### Service History
+
+- Service history functionality for accessing information about previous service activities
+
+### Testing and Documentation
+
+The team has carried out testing covering:
+
+- Authentication
+- Customer functionality
+- Service request functionality
+- Job functionality
+- API endpoints
+- Application navigation
+
+The README has also been updated to reflect the implemented features and the current project status.
+
+## Finalization and Deployment
+
+The team is completing the final stages of ServiTrack development.
+
+The remaining activities are:
+
+- [x] Final regression testing
+- [x] Fix remaining bugs
+- [x] Complete the final authentication and security review
+- [x] Improve validation and error handling
+- [x] Complete final frontend, backend, and database integration checks
+- [ ] Deploy the application
+- [ ] Record the final project video
+
+These activities will be marked complete after the team has finished and verified them.
+
+# #Development Plan
+
+## #Sprint 1 — Foundation
+
+Completed foundation work:
+
+- GitHub repository setup
+- React and Vite configuration
+- Express backend setup
+- PostgreSQL connection and database schema
+- Basic application navigation
+- Team collaboration and Git workflow
+
+## #Sprint 2 — Authentication and Customer Management
+
+Implemented:
+
+- User registration and login
+- JWT authentication
+- Protected API routes
+- Customer management
+- Customer search
+
+## #Sprint 3 — Service Requests and Core Workflows
+
+Development focused on service request management and supporting the application's service business workflows.
+
+## #Sprint 4 — Dashboard, Enhancements, and Finalization
+
+Completed development work includes:
+
+- Dashboard API and user interface
+- Database statistics
+- Upcoming jobs functionality
+- Frontend and backend API integration
+- Technician management
+- Job assignment
+- Advanced search and filtering
+- Service history
+- Authentication, customer, service request, job, API, and navigation testing
+- README update and documentation review
+
+### #Finalization and Deployment
+
+The team is working on:
+
+- Deployment
+- Final project video
+
+# #Project Status
+
+**Active Development — Finalization and Deployment Preparation**
+
+ServiTrack has implemented its core features and planned enhancements for managing customers, service requests, technicians, jobs, and service history.
+
+The team is completing final regression testing, remaining bug fixes, the security review, validation and error-handling improvements, and final integration.
+
+Deployment and the final project video remain part of the outstanding project deliverables.
+
 
 ### Authentication
 
